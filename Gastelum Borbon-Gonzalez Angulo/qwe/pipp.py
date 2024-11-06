@@ -75,7 +75,7 @@ def preprocesar_datos():
 
 # Función para clasificar los correos
 def clasificar():
-    global features, data  # Hacer que las variables sean globales.
+    global features, data, vectorizer  # Hacer que las variables sean globales.
     vectorizer = TfidfVectorizer(stop_words='english')  # Crear un vectorizador TF-IDF.
     features = vectorizer.fit_transform(data["text"])  # Ajustar y transformar el texto en características TF-IDF.
     
@@ -145,7 +145,7 @@ def evaluar_modelo():
     messagebox.showinfo("Evaluación Completa", "Evaluación del modelo completada.")
 
 def predecir_nuevos_correos():
-    global features  # Asegúrate de que ya tienes el vectorizador ajustado con el archivo anterior.
+    global features, vectorizer  # Asegúrate de que ya tienes el vectorizador ajustado con el archivo anterior.
     archivo_nuevo = filedialog.askopenfilename()  # Selecciona el nuevo archivo sin `target`.
     if archivo_nuevo:
         nuevos_datos = pd.read_csv(archivo_nuevo)  # Carga los nuevos correos.
@@ -161,7 +161,7 @@ def predecir_nuevos_correos():
         modelo_bayes = joblib.load("modelo_spam.pkl")
         
         # Vectorizar los correos nuevos y predecir.
-        nuevas_features = features.transform(nuevos_datos["text"])  # Vectorizar el texto.
+        nuevas_features = vectorizer.transform(nuevos_datos["text"])  # Vectorizar el texto.
         predicciones = modelo_bayes.predict(nuevas_features)  # Predice si es spam o no.
         
         # Mostrar resultados
